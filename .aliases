@@ -1,0 +1,46 @@
+# Aliases file to be sourced in bash and zsh => https://askubuntu.com/questions/31216/setting-up-aliases-in-zsh 
+
+# Source in .bashrc
+# if [ -f ~/.aliases ]; then
+#    . ~/.aliases
+# fi
+
+# Source in .zshrc
+# source $HOME/.aliases
+
+# Aliases
+alias ic=ibmcloud
+alias k=kubectl
+alias g=git
+
+
+
+# FUNCTION SHORTCUTS
+
+## git shortcuts
+gc() { git checkout "$1" }
+gs() { git status }
+gp() { git push }
+gf() { git fetch }
+gr() {
+# TODO: if "$1" is provided checkout etc. otherwise rebase directly
+   git checkout master
+   git pull origin master
+   git checkout "$1"
+   git rebase origin/master
+}
+
+## other shortcuts
+dl() { npm run start:dev-live }
+nr() { npm run }
+nrs() { npm run start }
+nrt() { npm run test }
+
+### toggle live mode
+tlm(){
+# https://unix.stackexchange.com/questions/112023/how-can-i-replace-a-string-in-a-files
+# https://linuxize.com/post/how-to-use-sed-to-find-and-replace-string-in-files/
+# TODO => add if statement to have a real toggle.
+   sed -i '' 's/dev3/int2/g' xo-live.properties
+   sed -i '' 's/xsp_dev/xsp_int_v2/g' xo-live.properties
+}
