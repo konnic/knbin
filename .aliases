@@ -1,46 +1,66 @@
-# Aliases file to be sourced in bash and zsh => https://askubuntu.com/questions/31216/setting-up-aliases-in-zsh 
+# Aliases file with simple productivity shortcuts to be sourced in zsh and bash.
+# Source: https://askubuntu.com/questions/31216/setting-up-aliases-in-zsh 
 
-# Source in .bashrc
+# How to source in .bashrc
 # if [ -f ~/.aliases ]; then
 #    . ~/.aliases
 # fi
 
-# Source in .zshrc
+# How to source in .zshrc
 # source $HOME/.aliases
 
-# Aliases
-alias ic=ibmcloud
+# ALIASES
 alias k=kubectl
 alias g=git
-
-
+alias ic=ibmcloud
 
 # FUNCTION SHORTCUTS
-
-## git shortcuts
+## git
 gc() { git checkout "$1" }
 gs() { git status }
 gp() { git push }
 gf() { git fetch }
 gr() {
-# TODO: if "$1" is provided checkout etc. otherwise rebase directly
-   git checkout master
-   git pull origin master
-   git checkout "$1"
-   git rebase origin/master
+   if [ "$1" = "" ]; then
+      git rebase origin/master
+   else
+      git checkout master
+      git pull origin master
+      git checkout "$1"
+      git rebase origin/master
+   fi
 }
 
-## other shortcuts
+## npm
 dl() { npm run start:dev-live }
-nr() { npm run }
+nr() { npm run "$1" }
 nrs() { npm run start }
 nrt() { npm run test }
 
-### toggle live mode
+## toggle live mode environment
 tlm(){
-# https://unix.stackexchange.com/questions/112023/how-can-i-replace-a-string-in-a-files
-# https://linuxize.com/post/how-to-use-sed-to-find-and-replace-string-in-files/
-# TODO => add if statement to have a real toggle.
-   sed -i '' 's/dev3/int2/g' xo-live.properties
-   sed -i '' 's/xsp_dev/xsp_int_v2/g' xo-live.properties
+   # Find (https://linux.die.net/man/1/grep) and replace (https://wiki.ubuntuusers.de/sed/) string.
+   if grep -Eq 'dev3' xo-live.properties
+   then
+      echo "Switched from DEV3 TO INT2"
+      sed -i '' 's/dev3/int2/g' xo-live.properties
+      sed -i '' 's/xsp_dev/xsp_int_v2/g' xo-live.properties
+   else
+      echo "Switched from INT2 TO DEV3"
+      sed -i '' 's/int2/dev3/g' xo-live.properties
+      sed -i '' 's/xsp_int_v2/xsp_dev/g' xo-live.properties
+   fi
+}
+
+## restart docker-compose
+rdc() { docker-compose down && docker-compose pull && docker-compose up }
+
+## set node memory limit
+nml() {
+   if [ "$1" = "" ]; then
+      echo "Provide a memory limit!"
+   else 
+      LIMIT=$(($1 * 1024))
+      export NODE_OPTIONS="--max-old-space-size=$LIMIT"
+   fi
 }
